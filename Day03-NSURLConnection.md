@@ -115,3 +115,6 @@
 	
 	}
 >以上是因为项目需要登录注册而复习了一下`NSURLConnection`的知识，欢迎大家指正。
+
+####题外话
+发现一个学习C++的小站，每一节挺短小而且也很基础，想看的话点[这里](http://see.xidian.edu.cn/cpp/biancheng/cpp/rumen_1/)
