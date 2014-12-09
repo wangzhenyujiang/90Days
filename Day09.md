@@ -354,4 +354,106 @@ Create:
 
 ######策略模式
 
+策略模式包括：抽象策略角色、具体策略角色，环境角色。
 
+环境角色：包含一个抽象策略角色的引用，通过set方法或构造函数完成策略对象的赋值，并提供给客户端一个策略调用的方法。
+
+下面写一个超市打折促销的例子来具体说明：
+
+价格计算抽象策略类：
+
+	public interface ICalculationPriceStrategy
+	{
+		public double calculationPrice(double price);
+	}
+
+普通会员价格计算的策略类实现类：
+
+	public class OrdinaryMemberStrategy implements ICalculationPriceStrategy
+	{
+		public double calculationPrice(double price)
+		{
+			System.out.println("--采用普通会员价格计算策略")；
+			return price;
+		}
+	}
+	
+中级会员价格计算的策略实现类：
+
+	public class IntermediateMemberStrategy implements ICalculationPriceStrategy
+	{
+		public double calculationPrice(double price)
+		{
+			System.out.println("--采用中级会员策略");
+		}
+	}
+	
+高级会员价格计算策略实现类：
+
+	public class SeniorMemberStrategy implements ICalculationPriceStrategy
+	{
+		public double calculationPrice(double price)
+		{
+			System.out.println("--采用高级会员策略");
+		}
+	}
+	
+环境角色：
+
+	public class CalcPriceContext{
+		private ICalculationPriceStrategy calcPriceStrategy;
+		
+		public CalcPriceContext(ICalculationPriceStrategy calcPriceStrategy)
+		{
+			this.calcPriceStrategy=calcPriceStrategy;
+		}
+		
+		public double calculationPrice(double price)
+		{
+			double finalPrice=0;
+			if(calcPriceStrategy!=null)
+			{
+	finalPrice=calcPriceStrategy.calculationPrice(price);
+				
+			}
+			return finalPrice;
+		}
+	}
+
+客户端测试类:
+
+	public class TestMian()
+	{
+		public static void main(String[] args)
+		{
+			double price=600;
+			doubel finalPrice=0;
+			CalcPriceContext context=null;
+			context=new CalcPriceContext(new OrdinaryMemberStrategy());
+			finalPrice=context.calculation(price);
+			System.out.println("普通会员");
+			context=new CalcPriceContext(new IntermediateMemberStrategy());
+			finalPrice=context.calculation(price);
+			System.out.println("中级会员");
+			context=new CalcPriceContext(new SeniorMemberStrategy());
+			finalPrice=context.calculation(price);
+			System.out.println("高级会员");
+		}
+	}
+	
+	
+总结：
+
+策略模式首先要有一个抽象策略角色，其次是继承或者实现接口的具体策略类。然后有一个管理具体策略类的环境角色，环境角色中有一个抽象策略角色，用来接受传进来的具体策略类。
+
+策略模式的优点如下：
+
+- 策略模式提供了管理相关的算法族的方法。策略类的等级结构定义了一个算法或行为族。恰当使用继承可以把公共的代码移到父类里面，从而避免代码重复。
+- 使用策略模式可以避免使用多重条件(if-else)语句。多重条件语句不易维护，它把采取哪一种算法或采取哪一种行为的逻辑与算法或行为的逻辑混合在一起，统统列在一个多重条件语句里面不利于代码的扩展。
+- 修改具体策略不影响客户端的调用。
+
+策略模式的缺点如下：
+
+- 客户端必须知道所有的策略类，并自行决定使用哪一个策略类。这就意味着客户端必须理解这些算法的区别，以便适时选择恰当的算法类。换言之，策略模式只适用于客户端知道算法或行为的情况。
+- 由于策略模式把每个具体的策略实现都单独封装成为类，所以会增加系统需要维护的类的数量。
+- 在基本的策略模式中，选择所用具体实现的职责由客户端对象承担，并转给策略模式的Context对象。这本身没有解除客户端需要选择判断的压力，而策略 模式与简单工厂模式结合后，选择具体实现的职责也可以由Context来承担，这就最大化的减轻了客户端的压力。
