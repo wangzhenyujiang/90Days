@@ -58,6 +58,12 @@
 
 ######复制和克隆
 
+####第十一章 重载
+
+**函数签名：**它是关于函数参数类型、参数顺序和返回值类型的描述。
+
+
+
 
 ####第十三章 多态变量
 
@@ -313,9 +319,9 @@ Create:
 
 	public static void main(String[] args) throws Exception {
 		PlaneFactory airBus = new AirbusFactory();
-		//看空客飞机飞
 		airBus.letPlaneFly("airbus320");
 		airBus.letPlaneFly("airbus380");
+		
 		PlaneFactory boeing = new BoeingPlaneFactory();
 		boeing.letPlaneFly("boeing777");
 		boeing.letPlaneFly("boeing737");
