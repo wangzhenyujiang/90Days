@@ -9,7 +9,7 @@
 
 #算法导论期末复习
 
-###Bellman-Ford算法
+###Bellman-Ford算法:
 
 >首先这个算法的时间复杂的是*O(VE)*
 
