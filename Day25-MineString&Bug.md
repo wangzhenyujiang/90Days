@@ -51,3 +51,41 @@
 			strcpy(_string,str._string);
 		}
 	}
+	
+####2B Bug又添新成员
+
+这个bug一点技术含量也没有，全靠本2B青年的大意才成就的它。
+
+先上main函数：
+
+	int main()
+	{
+		MineString str("Hello");
+		MineString str2="World";
+		
+		MineString str3=str+str2;
+		str3.MinePrint();
+		
+		return 0;
+	}
+	
+打印出来的结果是什么也没有...
+
+怎么回事呢，我看了一下str3的——size属性，竟然是0，_string属性竟然是NULL。真是醉得一逼啊！
+
+先看我重载=的代码：
+
+	MineString operator=(MineString &str1,MineString & str2)
+	{
+		MineString str;
+		str._size=str1._size+str2._size;
+		str._string=new char[str._size+1]；
+		strncpy(str._string,str1._string,str1._size);
+	strncat(str._string,str2._string,str2._size);
+		str._string[str._size]=NULL;
+		
+		return str;
+	}
+	
+开始我以为是因为在临时变量str被析构之后才执行的=函数。但是后来发现，先是执行的+再执行=，然后临时变量又被析构的。
+经过一番折腾，我竟然发现在=重载函数中我竟然没有写当str._size==0的处理情况，妈的，给自己一巴掌！
