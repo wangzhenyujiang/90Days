@@ -1,5 +1,13 @@
 
-#8天了，小站恢复正常运转。--01.16
+#Too Young Too Simple
+
+- OC
+- 函数式编程思想(Haskall,swift)
+- C++
+- 精巧小算法
+
+
+ 
 
 #Plan For 90Days
 >在前进的路上不能像只无头苍蝇撞来撞去，小站的文章也不能像打补丁似的乱七八糟，肿么办呢...Plan For 90Days。
