@@ -92,3 +92,18 @@ OBjective-C用`<...>`来表示复合协议。这个例子声明了一个弱的`p
 	@end
 	
 
+##在运行时检测optional方法有没有实现
+
+如果一个方法在协议里面被标记为`optional`，当你在试图调用它之前，你必须检查一个对象时候实现了那个方法。
+
+看这个例子，饼状视图`view`必须检测标题方法是否实现了，就像这样：
+
+	NSString *thisSegumentTitle;
+	
+	if([self.dataSource respondsToSelector:@selector(titleForSegmentAtIndex:)]){
+		thisSegmentTitle=[self.dataSource titleForSegmentAtIndex:index];
+	}
+	
+`repsondsToSelector:`方法用了一个selector，指向一个方法编译后的标识符。你通过`@selector`提供给正确的标识符和指定方法的名称。
+
+如果在这个例子中的数据源实现了方法，那么这个title是可用的，如果没有实现这个方法，那么标题就是空。
