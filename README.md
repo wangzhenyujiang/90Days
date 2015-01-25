@@ -1,8 +1,31 @@
 
+
+
 #Too Young Too Simple
 
 - OC
+
+	`ProgrammingWithObjective-C`
+	
+	`iOS Programming Pushing The Limits`
+
+	`OC Programming The Big Nerd Ranch Guide`
+	
+	[JSONModel](https://github.com/icanzilb/JSONModel):`runtime`
+	
+	[SDWebImage](https://github.com/rs/SDWebImage):
+	`Image Handle, Cache, NSOperation, Block)`
+	
+	[AFNetWorking](https://github.com/AFNetworking/AFNetworking):`NSOperation, HTTP, Block`
+	
+	[SVPullToRefresh](https://github.com/samvermette/SVPullToRefresh):`UIScrollView, State Handle`
+		
+
 - 函数式编程思想(Haskall,swift)
+
+	swift我会关注喵神维护的[swifter](http://swifter.tips/)。
+	
+	Haskall发现了一个很有趣的[学习网站](http://learnyouahaskell-zh-tw.csie.org/zh-cn/types-and-type-classes.html)，但是我最近可能没时间学习。
 - C++
 - 精巧小算法
 
