@@ -25,6 +25,8 @@
 
 	swift我会关注喵神维护的[swifter](http://swifter.tips/)。
 	
+	[Tutorals](http://www.raywenderlich.com/tutorials)
+	
 	Haskall发现了一个很有趣的[学习网站](http://learnyouahaskell-zh-tw.csie.org/zh-cn/types-and-type-classes.html)，但是我最近可能没时间学习。
 - C++
 - 精巧小算法
