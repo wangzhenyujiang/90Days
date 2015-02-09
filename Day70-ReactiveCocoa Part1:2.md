@@ -59,3 +59,114 @@ RACSignal *filteredUername = [usernameSourceSignal filter:^BOOL(id value){
 ```
 
 **Because each operation on an `RACSignal` also returns an `RACSignal` it's termed a fluent interface. This feature allows you to construct pipelines without the need to reference each step using a local variable**.
+
+##A Little Cast
+
+If you updated your code to split it into the various `RACSginal` compoments, now is the time to revert it back to the fluent syntax:
+
+```Objective-C
+[[self.usernameTextField.rac_textSignal 
+  filter:^BOOL(id value){
+  		NSString *text=value;
+  		return text.length>=3;
+  }]
+  subcribeNext:^(id x){
+  		NSLog(@"%@",x);
+  }];
+```
+The implicit cast from `id` to `NSString`, at the indicated location in the code above, is less than elegant. Fortunately,since the value passed to this block is always going to be an `NSString`, you can change the parameter type itself. Update your code as follows:
+
+```Objective-C
+[[self.usernameTextFiled.rac_textSignal 
+	filter:^BOOL(NSString *text){
+		return text.length.=3;
+	}]
+	subscribeNext:^(id x){
+		NSLog(@"%@",x);
+	}];
+```
+Bulid and run to confirm this works just as it did previously.
+
+##What's An Event?
+
+So far this tutorial has described the different event types, but hasn't detailed the structure of these events. **What's interesting is that an event can contain obsolutely anything**.
+
+As an illustration of this point, you're going to add another operation to the pipeline. Update the code you added to `viewDidLoad` as follows:
+
+```Objective-C
+[[[self.usernameTextField.rac_textSignal
+	map:^id(NSString *text){
+		return @(text.length);
+	}]
+	filter:^BOOL(NSNumber *length){
+		return [length integerValue] > 3;
+	}]
+	subscribeNext:^(id x){
+		NSLog(@"%@",x);
+	}];
+```
+If you bulid and run you'll find the app now logs the length of the text instead of the contents.
+
+The newly added map operation tranform the event data using the supplied block. For each `next` event it recives, it run the given block and emits the return value as a `next value`. In the code above, the map takes the `NSString` input and takes its length. which results in an `NSNumber` being returned.
+
+For a syunning graphic depiction of how this works, take a look at this image:
+![](http://cdn2.raywenderlich.com/wp-content/uploads/2014/01/FilterAndMapPipeline.png)
+
+**As you can see, all of the steps that follow the `map` operation now receive `NSNumber` instance. You can use the `map` operation to tranform the recived data into anything you like, as long as it's an object.**
+
+##Creating Valid State Signals
+
+The first thing you need to do is create a couple of signals that indicatemwhether the username and password text fields are valid. Add the follwing to the end of `viewDidLoad`.
+
+```Objective-C
+RACSignal *validUsernameSignal = 
+[self.usernameTextField.rac_textSignal 
+	map:^id(NSString *text){
+		return @([self isValidUsername:text]);
+	}];
+	
+RACSignal *validPasswordSignal = 
+[self.passwordTextField.rac_textSignal 
+	map:^id(NSString *text){
+		return @([self isValidPasseord:text]);
+	}];
+```
+As you can see, the above code applies a `map` transform to the `rac_textSignal` from each text field. The output is a boolean value boxed as a `NSNumber`.
+
+The next step si to tranform these signals so that they provie a nice background color to text fields. Basicaly you subscribe to this signal and use the result to update the next field background color. One viable option is as follows:
+
+```Objective-C
+[[validPasswordSignal 
+	map:^id(NSNumber *passwordValid){
+		return [passwordValid boolValue] ? [UIColor clearColor] : [UIColor yellowColor];
+	}]
+	subcribeNext:^(UIColor *color){
+		self.passworldTextField.backgroundColor = color;
+	}];	
+```
+Conceptually you're assigning the output of this signal to the `backgroungColor` property of the et field. However, he code above is poor expression of this;it's all backwards!
+
+Fortunately, ReactiveCocoa has a macro that allows you to express this with grace and elegance. Add the following coe directly beneath the two signals you added to `viewDidLoad`:
+
+```Objective-C
+RAC(self.passwordTextField,backgroundColor) =
+	[validPasswordSignal 
+		map:^id(NSNumber  *passwordValid){
+			return [passwordValid boolValue] ? [UIColor clearColor] : [UIColor yellowColor];
+		}];
+		
+RAC(self.usernameTextField,backgroundColor) =
+	[validUsernameSignal
+		map:^id(NSNumber *passwordValid){
+			return [passwordValid boolValue] ? [UIColor clearColor] : [UIColor yellowColor];
+		}];
+```
+
+The RAC macro allow you to assgin the output of signal to property of an object. It takes two arguments,the first is the object that contains the property to set and second is the property name. Each time the signal emits a next event, the calue that passes is assgined to given property. 
+
+Bulid and run the application. You should find that the next fields look highlighted when invalid,and clear when valid.
+
+Visuals are nice ,so here is a way to visualize the current logic. Here you can see two simple pipelines that take the text signals,map them to validity-indicating booleans, and then follow with a second mapping to a `UIColor` which is the part that binds to he background color of the text field.
+
+![](http://cdn5.raywenderlich.com/wp-content/uploads/2014/01/TextFieldValidPipeline.png)
+
