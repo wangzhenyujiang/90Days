@@ -4,7 +4,7 @@ As metioned in the introduction, ReactiveCocoa provides a standard interface foe
 
 Adding the `ReactiveCocoa Framework` to your project and import `<ReactiveCocoa/ReactiveCocoa.h>` to your main Controller.m file.
 
-You aren't going to relpace any of the existing code just yet, for now you're just going to play around a bit. Add the following code to the end of the `ViewDidLoad` method:
+You aren't going to relpace any of the existing code just yet, for now you're just going to play around a bit. Add the following code to the end of the a `ViewDidLoad` method:
 
 ```Objective-C
 [self.usernameTextField.rac_textSignal subcribeNext:^(id x){
