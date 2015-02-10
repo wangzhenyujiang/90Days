@@ -170,3 +170,20 @@ Visuals are nice ,so here is a way to visualize the current logic. Here you can 
 
 ![](http://cdn5.raywenderlich.com/wp-content/uploads/2014/01/TextFieldValidPipeline.png)
 
+##Combining signals
+
+In the current app, the `Sign In` button only works when both the username and pasword text fields have valid input. It's time to do this *reactive-style*.
+
+The current code already has signals that emit a boolean value to indicate if the username and password field are valid. `validUsernameSignal` and `validPasswordSignal`. Your task is to combine these two signals to determine when it is okay to enable the button.
+
+At the end of `viewDidLoad` add the following:
+
+```Objective-C
+RACSignal *sigalActiveSignal = 
+[RACSignal combineLatest:@[validUsernameSignal,validPasswordSignal]
+		   reduce:^id(NSNumber *usernameValid, NSNumber *passwordValid){
+						return @([usernameValid boolValue] && [passwordValid boolValue]);
+			}];
+```
+
+The above code uses the `combineLatest:reduce:` method to combine the latest values emitted by `validUsernameSignal` and `validPasswordSignal` into a shiny new signal. Each time either of the two source signals emits a new value, the reduce block executes, and the value it returns is sent as the next value of the combined signal. 
