@@ -6,6 +6,8 @@
 
 首先，我们要定义自己的一个智能指针的类，用户持有指向这个类的指针，而这个指针类才真正的指向数据。
 
+![](https://github.com/wangzhenyujiang/90Days/blob/master/Day78-picture.png?raw=true)
+
 看下面一个 HasPrt 类：
 
 ```C++
