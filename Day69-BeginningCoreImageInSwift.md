@@ -72,3 +72,86 @@ Congratulations, you have successfully used CIImage and CIFilters!
 Before you move forward,there's an optimization that you should know about.
 
 I nnetioned earlier that you need a `CIContext` in order to apply a CIFilter,yet there's no mention os this object in the above example.It turns out that the `UIImage(CIImage:)` constructor does all the work for you.It creates a `CIContext` and uses it to perfrom the work of filtering the iamge. This makes using the Core Image API very easy. 
+
+There is one major drawback - it creates a new `CIContext`every time it's used.`CIContext` instances are meant to be reusable to increase performance. If you want to use a silder to update the filter value ,as you'll be doing in this tutorial, creating a new `CIContext` each tome you change the filter would be way too slow.
+
+Let's do this properly. Delete step 4 from the code you added to `viewDidLoad()`,and replace it with the following:
+
+```Swift
+//1
+let context = CIContext(options : nil)
+//2
+let cgimg = context.createCGImage(filter.outputImage,formRect:filter.outputImage.extent())
+//3
+let newImage = UIIImage(CGImage : cgimg)
+self.imageView.image = newImage
+```
+Again,let's go over this section by section.
+
+1. Here you set up the CIContext object and use it to draw a CGImage. The `CIContext(options:)` constructor takes an NSDictionary that specifies options such as the color format, or whether the context should run on the CPU or GPU. For this app, the default values are fine and so you pass in nil for that argument.
+
+2. Calling `createCGImage(outputImage:fromRect:)`on the context with the supplied CIImage will return a new CIImage instance.
+
+3. Next, you use the `UIImage(CGImage:)` constructor to create a UIImage from the newly created CGImage instead of directly from the CIImage as before. Note that there is no need to explicitly release the CGImage after we are finished with it, as there would have been in Objective-C. In Swift, ARC can automatically release Core Foundation objects.
+
+Bulid and run, and make sure it works just as before.
+
+In this example, handling the CIContext creation yourself doesn't make much difference.But in next section,you'll see why this is important for performance, as you implement the ability to modify the filter dynamically!
+
+##Changing Filter Values
+
+This is great,but it's just the beginning of what you can do with Core Image filters,Lets add a silder and set it up so you can adjust the filter settings in real time.
+
+Every time the silder changes, you need to redo the image filter with a different value,However, you don't want to redo the whole peocess,that would be very inefficient and would take too lang. You'll need to change a few things in your class so that you hold on to some of the objects you create in your viewDidLoad.
+
+The biggest thing you want to do is reuse the CIContext whenever you need to use it.If you recreate it each time, your program will run very slowly.The other things you can hold onto are the CIFilter and the CIImage that holds your original image,You'll need a new CIImage for every output,but the image you start with will stay constant.
+
+You need to add some instance variables to accomplish this task.Add the following three properties to your ViewController class:
+
+```Swift
+var context : CIContext!
+var filter : CIFilter!
+var beginImage : CIImage!
+```
+
+Change the code in `viewDidLaod` so it uses these properties instead of declaring new local variables,as follows:
+
+```Swift
+beginImage = CIImage(contentsOfURL: fileURL)
+
+filter = CIFilter(name:"CISepiaTone")
+filter.setValue(beginImage,forKey:"kCIInputImageKey")
+filter.setValue(0.5,forKey:"KCIInputIntensityKey")
+
+let outputImage = filter.outputImage
+
+context = CIContext(options:nil)
+let cgimg = context.createCGImage(outputImage,formRect:outputImage.extent())
+```
+Now you'll implement the changeValue method. What you'll be doing in this method is altering the value of the `inputIntensity` key in your CIFilter dictionary.
+
+Once you've altered this value you'll need to repeat a few steps:
+
+- Get the ouput CIImage form the CIFilter.
+- Convert the CIImage to a CGImage.
+- Convert the CGImage to a UIImage,and display it in the image view.
+
+Replace amountSliderValueChanged(sender:) with the following:
+
+```Swift
+@IBAction func amountSliderValueChanged(sender: UISlider){
+	let sliderValue = sender.value
+	
+	filter.setValue(silderValue,forKey:"kCIInputIntentsityKey")
+	let outputImage = filter.outputImage
+	
+	let cgimg = context.createCGImage(outputImage,fromRect:outputImage.extent())
+	
+	let newImage = UIImage(CGImage: chimg)
+	self.imageView.image = newImage
+}
+```
+###Getting Photos from the Photo Album
+
+Next you'll set up a `UIImagePickerController` so you can get pictures from out of the photo album and into your app so you can play with them.
+

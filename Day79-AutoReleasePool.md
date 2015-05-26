@@ -8,7 +8,7 @@ MRC 和 ARC ，分别对应着手动引用计数和自动引用计数。
 
 >注意，计数，并不是垃圾回收机制。也就是说，在 Objective-C 的开发中， ARC 并不像 Java 那样有 GC 做的垃圾回收机制，所以本质上还需要“手动”管理内存的。也就是说，我们在 ARC 下写的代码，不用自己手动插入 “retain”、“release” 这些消息，ARC 会在编译的时候为我们在合适的位置插入，释放不必要的内存。
 
-而 `@autoRelesesPool` 就跟 对象的 `release` 密切相关。
+而 `@autoRelesesPool` 就跟对象的 `release` 密切相关。
 
 ##@autoreleasepool 干了啥
 
